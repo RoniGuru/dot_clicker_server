@@ -7,6 +7,7 @@ import {
   insertRefreshTokenDB,
   updateRefreshTokenDB,
   clearRefreshTokenDB,
+  updateUserHighScoreDB,
 } from '../db/database.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -44,6 +45,7 @@ export async function login(req, res) {
     res.status(500).send(error);
   }
 }
+
 export async function logout(req, res) {
   try {
     await clearRefreshTokenDB(req.body.id);
@@ -93,7 +95,19 @@ export async function updateUser(req, res) {
       ? res.status(200).json('user updated')
       : res.status(404).json('user not found');
   } catch (error) {
-    console.log('Error creating user:', error);
+    console.log('Error updating user:', error);
+    res.status(500).send(error);
+  }
+}
+
+export async function updateUserScore(req, res) {
+  try {
+    const result = await updateUserDB(req.body.score, req.body.id);
+    result
+      ? res.status(200).json('user score updated')
+      : res.status(404).json('user not found');
+  } catch (error) {
+    console.log('Error updating  user score:', error);
     res.status(500).send(error);
   }
 }

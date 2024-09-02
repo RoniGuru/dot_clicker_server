@@ -66,6 +66,26 @@ export async function updateUserDB(username, userId) {
   }
 }
 
+export async function updateUserHighScoreDB(score, userId) {
+  try {
+    const [results] = await pool.query(
+      'update users set high_score = ? where id = ?',
+      [score, userId]
+    );
+
+    if (results.affectedRows > 0) {
+      console.log('score  updated ');
+      return true;
+    } else {
+      console.log('Failed to user score');
+      return false;
+    }
+  } catch (error) {
+    console.log('Error updating user score', error);
+    return false;
+  }
+}
+
 export async function deleteUserDB(userId) {
   try {
     const [results] = await pool.query('delete from  users  where id = ?', [

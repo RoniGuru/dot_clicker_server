@@ -6,6 +6,7 @@ import {
   updateUser,
   getToken,
   logout,
+  updateUserScore,
 } from '../controllers/userController.js';
 import express from 'express';
 import jwt from 'jsonwebtoken';
@@ -17,6 +18,7 @@ router.post('/login', login);
 router.post('/register', createUser);
 router.delete('/delete', authenticateToken, deleteUser);
 router.put('/update', authenticateToken, updateUser);
+router.put('/updateScore', authenticateToken, updateUserScore);
 router.post('/logout', logout);
 
 router.post('/token', getToken);
