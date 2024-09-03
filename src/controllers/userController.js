@@ -11,6 +11,9 @@ import {
 } from '../db/database.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export async function getUser(req, res) {
   console.log(req.body);
