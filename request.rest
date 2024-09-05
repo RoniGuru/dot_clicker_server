@@ -52,8 +52,16 @@ Content-Type: application/json
 }
 
 
+###logout user
+post  http://localhost:3000/user/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3MjUyMjE1NjMsImV4cCI6MTcyNTIyNTE2M30.ORWIz_aaSwLStCpAPhsAj5WyPV_RVFnt0hiqZcQjjog
+Content-Type: application/json
 
-
+{
+  "id":19,
+  "name":"testing",
+  "password":"password"
+}
 
 
 

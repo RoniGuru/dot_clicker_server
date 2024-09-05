@@ -173,10 +173,10 @@ export async function getRefreshTokenDB(userId) {
       'Select * from refresh_token  where user_id = ?',
       [userId]
     );
-
+    console.log('get refresh token ', result[0]);
     if (result[0]) {
       console.log('token found ');
-      return result[0].refresh_token;
+      return result[0];
     } else {
       console.log('Failed to get token');
       return false;

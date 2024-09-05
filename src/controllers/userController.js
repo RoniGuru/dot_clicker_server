@@ -32,6 +32,8 @@ export async function login(req, res) {
     const token = generateRefreshToken(user.username);
     //get refresh token
     const refreshToken = await getRefreshTokenDB(user.id);
+
+    console.log('refresh token', refreshToken);
     if (refreshToken) {
       console.log(' token');
 
@@ -42,7 +44,11 @@ export async function login(req, res) {
     }
 
     const accessToken = generateAccessToken(user);
-    res.json({ accessToken: accessToken, refreshToken: token });
+    res.json({
+      accessToken: accessToken,
+      refreshToken: token,
+      user: { id: user.id, name: user.username, score: user.high_score },
+    });
   } catch (error) {
     console.log('Error logging in user:', error);
     res.status(500).send(error);
@@ -63,7 +69,7 @@ export async function createUser(req, res) {
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const user = await createUserDB(req.body.name, hashedPassword);
-    console.log(user);
+
     user
       ? res.status(200).json(user)
       : res.status(500).json('user not created');
