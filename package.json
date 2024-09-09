@@ -1,5 +1,5 @@
 {
-  "name": "customer_user_db-new",
+  "name": "dot_clicker_server",
   "version": "1.0.0",
   "main": "src/app.js",
   "type": "module",

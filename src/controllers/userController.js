@@ -28,7 +28,7 @@ export async function login(req, res) {
     if (!user) return res.status(404).send('username does not exist');
 
     const compare = await bcrypt.compare(req.body.password, user.password);
-    if (!compare) return res.send('password incorrect');
+    if (!compare) return res.status(404).send('password incorrect');
     const token = generateRefreshToken(user.username);
     //get refresh token
     const refreshToken = await getRefreshTokenDB(user.id);
@@ -111,7 +111,7 @@ export async function updateUser(req, res) {
 
 export async function updateUserScore(req, res) {
   try {
-    const result = await updateUserDB(req.body.score, req.body.id);
+    const result = await updateUserHighScoreDB(req.body.score, req.body.id);
     result
       ? res.status(200).json('user score updated')
       : res.status(404).json('user not found');
