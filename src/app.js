@@ -8,9 +8,25 @@ dotenv.config();
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+const allowedOrigins = ['https://lemon-grass-092b77703.5.azurestaticapps.net'];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use('/user', usersRoutes);
 
-app.listen(3000, () => {
-  console.log('listening');
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+  console.log(`listening on port ${port}`);
 });
