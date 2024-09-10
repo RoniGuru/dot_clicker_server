@@ -4,11 +4,17 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const pool = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
+  host: process.env.AZURE_MYSQL_HOST,
+  user: process.env.AZURE_MYSQL_USER,
+  password: process.env.AZURE_MYSQL_PASSWORD,
+  database: process.env.AZURE_MYSQL_DATABASE,
+  ssl:
+    process.env.AZURE_MYSQL_SSL === 'true'
+      ? { rejectUnauthorized: true }
+      : false,
+  waitForConnections: true,
   connectionLimit: 10,
+  queueLimit: 0,
 });
 
 export async function createUserDB(username, hashedPassword) {

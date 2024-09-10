@@ -8,6 +8,17 @@ Content-Type: application/json
 }
 
 
+###register
+post https://dotclickerserver-b8baaeesfvhmgtd9.ukwest-01.azurewebsites.net/user/register
+Content-Type: application/json
+
+{
+  "name": "ssssss",
+  "password":"password"
+}
+
+
+
 ###login
 post http://localhost:3000/user/login
 Content-Type: application/json
