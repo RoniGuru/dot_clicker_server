@@ -1,3 +1,9 @@
 node_modules/
 .env
 __test__
+
+request.rest
+./request.rest
+
+*.rest
+/request.rest

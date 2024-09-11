@@ -9,11 +9,11 @@ const app = express();
 
 app.use(express.json());
 
-const corsOptions = {
-  origin: process.env.WEB_URL,
-  optionsSuccessStatus: 200,
-};
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: process.env.WEB_URL,
+  })
+);
 app.use('/user', usersRoutes);
 
 const port = process.env.PORT || 3000;
