@@ -3,7 +3,11 @@ import usersRoutes from './routes/userRoutes.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
-dotenv.config();
+if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config({ path: '.env.development' });
+}
 
 const app = express();
 
