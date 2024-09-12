@@ -1,20 +1,37 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
-dotenv.config();
+if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
+} else {
+  dotenv.config({ path: '.env.development' });
+}
 
 export const pool = mysql.createPool({
-  host: process.env.AZURE_MYSQL_HOST,
-  user: process.env.AZURE_MYSQL_USER,
-  password: process.env.AZURE_MYSQL_PASSWORD,
-  database: process.env.AZURE_MYSQL_DATABASE,
+  host:
+    process.env.NODE_ENV === 'production'
+      ? process.env.AZURE_MYSQL_HOST
+      : process.env.HOST,
+  user:
+    process.env.NODE_ENV === 'production'
+      ? process.env.AZURE_MYSQL_USER
+      : process.env.USER,
+  password:
+    process.env.NODE_ENV === 'production'
+      ? process.env.AZURE_MYSQL_PASSWORD
+      : process.env.PASSWORD,
+  database:
+    process.env.NODE_ENV === 'production'
+      ? process.env.AZURE_MYSQL_DATABASE
+      : process.env.DATABASE,
   ssl:
+    process.env.NODE_ENV === 'production' &&
     process.env.AZURE_MYSQL_SSL === 'true'
       ? { rejectUnauthorized: true }
       : false,
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0,
+  queueLimit: 3,
 });
 
 export async function createUserDB(username, hashedPassword) {
