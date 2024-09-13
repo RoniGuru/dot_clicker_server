@@ -1,33 +1,14 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 
-if (process.env.NODE_ENV === 'production') {
-  dotenv.config({ path: '.env.production' });
-} else {
-  dotenv.config({ path: '.env.development' });
-}
+dotenv.config();
 
 export const pool = mysql.createPool({
-  host:
-    process.env.NODE_ENV === 'production'
-      ? process.env.AZURE_MYSQL_HOST
-      : process.env.HOST,
-  user:
-    process.env.NODE_ENV === 'production'
-      ? process.env.AZURE_MYSQL_USER
-      : process.env.USER,
-  password:
-    process.env.NODE_ENV === 'production'
-      ? process.env.AZURE_MYSQL_PASSWORD
-      : process.env.PASSWORD,
-  database:
-    process.env.NODE_ENV === 'production'
-      ? process.env.AZURE_MYSQL_DATABASE
-      : process.env.DATABASE,
-  port:
-    process.env.NODE_ENV === 'production'
-      ? process.env.AZURE_MYSQL_PORT
-      : process.env.PORT,
+  host: process.env.AZURE_MYSQL_HOST,
+  user: process.env.AZURE_MYSQL_USER,
+  password: process.env.AZURE_MYSQL_PASSWORD,
+  database: process.env.AZURE_MYSQL_DATABASE,
+  port: process.env.AZURE_MYSQL_PORT,
   ssl: {
     rejectUnauthorized: true,
   },
@@ -35,6 +16,20 @@ export const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 3,
 });
+
+// export const pool = mysql.createPool({
+//   host: process.env.HOST,
+//   user: process.env.USER,
+//   password: process.env.PASSWORD,
+//   database: process.env.DATABASE,
+//   port: process.env.DEV_PORT,
+//   ssl: {
+//     rejectUnauthorized: false, // If needed, adjust for local/development
+//   },
+//   waitForConnections: true,
+//   connectionLimit: 10,
+//   queueLimit: 3,
+// });
 
 export async function createUserDB(username, hashedPassword) {
   try {
