@@ -24,11 +24,13 @@ export const pool = mysql.createPool({
     process.env.NODE_ENV === 'production'
       ? process.env.AZURE_MYSQL_DATABASE
       : process.env.DATABASE,
-  ssl:
-    process.env.NODE_ENV === 'production' &&
-    process.env.AZURE_MYSQL_SSL === 'true'
-      ? { rejectUnauthorized: true }
-      : false,
+  port:
+    process.env.NODE_ENV === 'production'
+      ? process.env.AZURE_MYSQL_PORT
+      : process.env.PORT,
+  ssl: {
+    rejectUnauthorized: true,
+  },
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 3,
