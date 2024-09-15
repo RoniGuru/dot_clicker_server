@@ -27,7 +27,7 @@ export default router;
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  console.log('this is the token', token);
+
   if (token == null) return res.status(401).send('no token');
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
