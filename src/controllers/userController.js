@@ -82,12 +82,12 @@ export async function createUser(req, res) {
 export async function deleteUser(req, res) {
   try {
     const user = await getUserDB(req.body.name);
-    console.log(user);
 
-    const compare = await bcrypt.compare(req.body.password, user.user_password);
-    if (!compare) return res.send('password incorrect');
+    const compare = await bcrypt.compare(req.body.password, user.password);
+    if (!compare) return res.status(401).send('password incorrect');
 
-    const result = await deleteUserDB(req.body.id);
+    const result = await deleteUserDB(user.id);
+
     result
       ? res.status(200).json('user deleted')
       : res.status(404).json('user not found');
