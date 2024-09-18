@@ -1,13 +1,14 @@
 import {
   getUserDB,
   createUserDB,
-  updateUserDB,
+  updateUserUserNameDB,
   deleteUserDB,
   getRefreshTokenDB,
   insertRefreshTokenDB,
   updateRefreshTokenDB,
   clearRefreshTokenDB,
   updateUserHighScoreDB,
+  updateUserPasswordDB,
 } from '../db/database.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -16,8 +17,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export async function getUser(req, res) {
-  console.log(req.body);
   const user = await getUserDB(req.body.name);
+  if (!user) return res.status(404).send('username does not exist');
 
   return res.json({ id: user.id, username: user.username });
 }
@@ -97,14 +98,41 @@ export async function deleteUser(req, res) {
   }
 }
 
-export async function updateUser(req, res) {
+export async function updateUserName(req, res) {
   try {
-    const result = await updateUserDB(req.body.name, req.body.id);
+    const { id, name, newName, password } = req.body;
+
+    if (!id || !name || !password || !newName) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    checkPassword(name, req.password, res);
+
+    const result = await updateUserUserNameDB(newName, id);
     result
       ? res.status(200).json('user updated')
       : res.status(404).json('user not found');
   } catch (error) {
     console.log('Error updating user:', error);
+    res.status(500).send(error);
+  }
+}
+
+export async function updateUserPassword(req, res) {
+  try {
+    const { id, name, password, newPassword } = req.body;
+
+    if (!id || !name || !password || !newPassword) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    checkPassword(name, password, res);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const result = await updateUserPasswordDB(hashedPassword, id);
+    result
+      ? res.status(200).json('user password updated')
+      : res.status(404).json('user not found');
+  } catch (error) {
+    console.log('Error updating user password:', error);
     res.status(500).send(error);
   }
 }
@@ -144,4 +172,13 @@ export function generateRefreshToken(username) {
   return jwt.sign({ username }, process.env.REFRESH_TOKEN_SECRET, {
     expiresIn: '30d',
   });
+}
+
+export async function checkPassword(username, password, res) {
+  const user = await getUserDB(username);
+
+  if (!user) return res.status(404).send('username does not exist');
+
+  const compare = await bcrypt.compare(password, user.password);
+  if (!compare) return res.status(404).send('password incorrect');
 }

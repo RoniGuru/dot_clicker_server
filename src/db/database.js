@@ -9,27 +9,11 @@ export const pool = mysql.createPool({
   password: process.env.AZURE_MYSQL_PASSWORD,
   database: process.env.AZURE_MYSQL_DATABASE,
   port: process.env.AZURE_MYSQL_PORT,
-  ssl: {
-    rejectUnauthorized: true,
-  },
+
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 3,
 });
-
-// export const pool = mysql.createPool({
-//   host: process.env.HOST,
-//   user: process.env.USER,
-//   password: process.env.PASSWORD,
-//   database: process.env.DATABASE,
-//   port: process.env.DEV_PORT,
-//   ssl: {
-//     rejectUnauthorized: false, // If needed, adjust for local/development
-//   },
-//   waitForConnections: true,
-//   connectionLimit: 10,
-//   queueLimit: 3,
-// });
 
 export async function createUserDB(username, hashedPassword) {
   try {
@@ -57,11 +41,10 @@ export async function createUserDB(username, hashedPassword) {
 
 export async function getUserDB(username) {
   try {
-    console.log('username', username);
     const result = await pool.query('Select * from users where username = ?', [
       username,
     ]);
-    console.log(result);
+
     return result[0][0];
   } catch (error) {
     console.log('Error getting user:', error);
@@ -69,7 +52,7 @@ export async function getUserDB(username) {
   }
 }
 
-export async function updateUserDB(username, userId) {
+export async function updateUserUserNameDB(username, userId) {
   try {
     const [results] = await pool.query(
       'update users set username = ? where id = ?',
@@ -81,6 +64,26 @@ export async function updateUserDB(username, userId) {
       return true;
     } else {
       console.log('Failed to update user');
+      return false;
+    }
+  } catch (error) {
+    console.log('Error updating user:', error);
+    return false;
+  }
+}
+
+export async function updateUserPasswordDB(newPassword, userId) {
+  try {
+    const [results] = await pool.query(
+      'update users set password = ? where id = ?',
+      [newPassword, userId]
+    );
+
+    if (results.affectedRows > 0) {
+      console.log('user  password updated ');
+      return true;
+    } else {
+      console.log('Failed to update user password');
       return false;
     }
   } catch (error) {

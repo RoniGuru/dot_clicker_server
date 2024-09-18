@@ -3,7 +3,8 @@ import {
   login,
   createUser,
   deleteUser,
-  updateUser,
+  updateUserName,
+  updateUserPassword,
   getToken,
   logout,
   updateUserScore,
@@ -17,7 +18,8 @@ router.get('/', authenticateToken, getUser);
 router.post('/login', login);
 router.post('/register', createUser);
 router.delete('/delete', authenticateToken, deleteUser);
-router.put('/update', authenticateToken, updateUser);
+router.put('/updateName', authenticateToken, updateUserName);
+router.put('/updatePassword', authenticateToken, updateUserPassword);
 router.put('/updateScore', authenticateToken, updateUserScore);
 router.post('/logout', logout);
 
