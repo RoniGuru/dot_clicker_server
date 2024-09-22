@@ -8,6 +8,7 @@ import {
   getToken,
   logout,
   updateUserScore,
+  getLeaderBoard,
 } from '../controllers/userController.js';
 import express from 'express';
 import jwt from 'jsonwebtoken';
@@ -22,6 +23,7 @@ router.put('/updateName', authenticateToken, updateUserName);
 router.put('/updatePassword', authenticateToken, updateUserPassword);
 router.put('/updateScore', authenticateToken, updateUserScore);
 router.post('/logout', logout);
+router.get('/leaderBoard', getLeaderBoard);
 
 router.post('/token', getToken);
 export default router;

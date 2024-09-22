@@ -9,7 +9,9 @@ export const pool = mysql.createPool({
   password: process.env.AZURE_MYSQL_PASSWORD,
   database: process.env.AZURE_MYSQL_DATABASE,
   port: process.env.AZURE_MYSQL_PORT,
-
+  ssl: {
+    rejectUnauthorized: true, // Ensure SSL verification
+  },
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 3,
@@ -60,7 +62,7 @@ export async function updateUserUserNameDB(username, userId) {
     );
 
     if (results.affectedRows > 0) {
-      console.log('user  updated ');
+      console.log('user  name updated ');
       return true;
     } else {
       console.log('Failed to update user');
@@ -206,6 +208,24 @@ export async function getRefreshTokenDB(userId) {
     }
   } catch (error) {
     console.log('Error getting token:', error);
+    return false;
+  }
+}
+
+export async function getLeaderBoardDB() {
+  try {
+    const [result] = await pool.query(
+      'Select username, high_score from users order by high_score desc limit 5'
+    );
+
+    if (result[0]) {
+      return result;
+    } else {
+      console.log('Failed to get top 5');
+      return false;
+    }
+  } catch (error) {
+    console.log('Error getting top 5:', error);
     return false;
   }
 }

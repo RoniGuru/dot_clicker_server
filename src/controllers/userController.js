@@ -9,6 +9,7 @@ import {
   clearRefreshTokenDB,
   updateUserHighScoreDB,
   updateUserPasswordDB,
+  getLeaderBoardDB,
 } from '../db/database.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -105,14 +106,17 @@ export async function updateUserName(req, res) {
     if (!id || !name || !password || !newName) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
-    checkPassword(name, req.password, res);
+
+    const pass = await checkPassword(name, password, res);
+
+    if (!pass) return res.status(401).json('password invalid');
 
     const result = await updateUserUserNameDB(newName, id);
     result
       ? res.status(200).json('user updated')
-      : res.status(404).json('user not found');
+      : res.status(404).json('new username not unique');
   } catch (error) {
-    console.log('Error updating user:', error);
+    console.log('Error updating user name:', error);
     res.status(500).send(error);
   }
 }
@@ -125,12 +129,13 @@ export async function updateUserPassword(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    checkPassword(name, password, res);
+    const pass = checkPassword(name, password, res);
+    if (!pass) return res.status(401).json('password invalid');
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     const result = await updateUserPasswordDB(hashedPassword, id);
     result
       ? res.status(200).json('user password updated')
-      : res.status(404).json('user not found');
+      : res.status(404).json('user not found ');
   } catch (error) {
     console.log('Error updating user password:', error);
     res.status(500).send(error);
@@ -174,11 +179,31 @@ export function generateRefreshToken(username) {
   });
 }
 
+export async function getLeaderBoard(req, res) {
+  try {
+    const result = await getLeaderBoardDB();
+    result
+      ? res.status(200).json(result)
+      : res.status(404).json('top 5 not found');
+  } catch (err) {
+    console.log('Error getting leaderboard', err);
+    res.status(500).send(err);
+  }
+}
+
 export async function checkPassword(username, password, res) {
-  const user = await getUserDB(username);
+  try {
+    const user = await getUserDB(username);
 
-  if (!user) return res.status(404).send('username does not exist');
+    if (!user) return false;
 
-  const compare = await bcrypt.compare(password, user.password);
-  if (!compare) return res.status(404).send('password incorrect');
+    const compare = await bcrypt.compare(password, user.password);
+
+    if (!compare) return false;
+
+    return true;
+  } catch (err) {
+    console.log('error checking password', err);
+    throw err;
+  }
 }
